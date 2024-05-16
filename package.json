@@ -1,0 +1,11 @@
+{
+  "name": "gameServerCource-Assignment-01",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/KEastWiseman/gameServerCource-Assignment-01",
+  "author": "KEastWiseman <2ehgus6260@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
