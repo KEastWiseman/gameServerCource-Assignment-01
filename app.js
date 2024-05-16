@@ -1,6 +1,7 @@
 import express from 'express';
 import connect from './schemas/index.js';
 import charactersRouter from './routes/characters.router.js';
+import itemsRouter from './routes/item.router.js';
 
 
 const app = express();
@@ -12,7 +13,8 @@ app.use(express.urlencoded({extended:true}));
 
 app.use(express.static('./public')); // public 폴더 안 index.html static으로 지정
 
-app.use('/', charactersRouter);
+app.use('/character', charactersRouter); //character 관련 라우터
+app.use('/item',itemsRouter); //item 관련 라우터
 
 app.listen(PORT, () => {
     console.log(PORT, '포트로 서버가 열렸어요!');
