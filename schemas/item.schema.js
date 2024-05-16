@@ -12,9 +12,8 @@ const itemSchema = new mongoose.Schema({
       unique : true
     },
     item_stat : {
-      type : Array,
-      require : true,
-      unique : true
+      type : Object,
+      require : true
     }
   })
 
