@@ -1,5 +1,6 @@
 import express from "express";
 import Characters from "../schemas/character.schema.js"; // Character Schema 가져오기
+import CharactersIndex from "../schemas/chracterindex.schema.js";
 
 const router = express.Router(); // Express.js의 라우터 생성
 
@@ -21,6 +22,7 @@ router.get("/info/:id", async (req, res) => {
 
 // CREATE 캐릭터
 router.post("/create", async (req, res) => {
+  console.log(req.body);
   const { characterId, characterName, characterStats } = req.body;
 
   const characters = await Characters.findOne({

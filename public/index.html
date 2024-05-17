@@ -1,11 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>test</title>
-</head>
-<body>
-    
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gameserver</title>
+  </head>
+
+  <script>
+    let characterCount = 0;
+    let item_code = 0;
+    document.addEventListener("DOMContentLoaded", () => {
+      document // 1. 캐릭터 생성 버튼 이벤트
+        .getElementById("createCharacterBtn")
+        .addEventListener("click", () => {
+          let createdName = document.getElementById("charactername").value;
+          fetch("/character/create", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              characterId: characterCount++,
+              characterName: createdName,
+              characterStats: {
+                health: 500,
+                power: 100,
+              },
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("create-Character-Result").innerText =
+                createdName + ` 생성 완료`;
+              console.log(data); // 성공적인 응답 데이터 출력
+            })
+            .catch((error) => {
+              document.getElementById("create-Character-Result").innerText =
+                error;
+              console.log("Error:", error); // 에러 처리
+            });
+        });
+
+      document // 2. 캐릭터 정보 보기 버튼 이벤트
+        .getElementById("getCharacterBtn")
+        .addEventListener("click", () => {
+          let getName = document.getElementById("charactername-get").value;
+          console.log(getName);
+
+          fetch(`/character/info/${getName}`)
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("character-info-name").innerText =
+                data.character.characterName;
+              document.getElementById("character-info-health").innerText =
+                data.character.characterStats.health;
+              document.getElementById("character-info-power").innerText =
+                data.character.characterStats.power;
+            })
+            .catch((error) => {
+              document.getElementById("character-info-name").innerText =
+                "없는 캐릭터입니다";
+              document.getElementById("character-info-health").innerText = null;
+              document.getElementById("character-info-power").innerText = null;
+              console.log("Error:", error); // 에러 처리
+            });
+        });
+
+      document // 3. 캐릭터 정보 삭제 버튼 이벤트
+        .getElementById("delCharacterBtn")
+        .addEventListener("click", () => {
+          let delName = document.getElementById("charactername-del").value;
+          fetch(`/character/info/${delName}`)
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("delete-result").innerText =
+                delName + ` 가 삭제되었습니다`;
+            })
+            .catch((error) => {
+              document.getElementById("delete-result").innerText = error;
+            });
+        });
+
+      document // 4. 아이템 생성 버튼 이벤트
+        .getElementById("create-item-btn")
+        .addEventListener("click", () => {
+          let createdItemName = document.getElementById(
+            "create-item-input-name"
+          ).value;
+          let createdItemStatHealth = document.getElementById(
+            "create-item-input-health"
+          ).value;
+          let createdItemStatPower = document.getElementById(
+            "create-item-input-power"
+          ).value;
+          fetch("/item/create", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              item_code: item_code++,
+              item_name: createdItemName,
+              item_stat: {
+                health: createdItemStatHealth,
+                power: createdItemStatPower,
+              },
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("create-item-result").innerText =
+                createdItemName + ` 생성 완료`;
+              console.log(data); // 성공적인 응답 데이터 출력
+            })
+            .catch((error) => {
+              document.getElementById("create-item-result").innerText = error;
+              console.log("Error:", error); // 에러 처리
+            });
+        });
+
+      //5. 아이템 목록 열람
+      document.getElementById("list-item-btn").addEventListener("click", () => {
+        fetch("/item/list")
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+          })
+          .catch((error) => {
+            console.log("Error:", error);
+          });
+      });
+
+      //6. 아이템 상세 정보 보기
+      document.getElementById("get-item-btn").addEventListener("click",()=>{
+        let getItemCode=document.getElementById("get-item-input").value;
+        fetch(`/item/detailInfo/${getItemCode}`)
+        .then((response) => response.json())
+        .then((data)=>{
+          console.log(data);
+        })
+        .catch((error)=>{
+          console.log("Error:",error);
+        })
+      })
+    });
+  </script>
+
+  <body>
+    <div style="display: flex; flex-direction: column">
+      <h1>게임 서버 1차 개인 과제</h1>
+      <div style="height: 20vh; display: flex">
+        <div>
+          <h2>1. 캐릭터 생성</h2>
+          <input
+            id="charactername"
+            placeholder="생성할 캐릭터 이름 입력"
+          /><button id="createCharacterBtn">생성</button>
+        </div>
+        <div style="margin-left: 10vw">
+          <h3>결과</h3>
+          <p id="create-Character-Result"></p>
+        </div>
+      </div>
+      <div style="height: 20vh; display: flex">
+        <div>
+          <h2>2. 캐릭터 정보 보기</h2>
+          <input
+            id="charactername-get"
+            placeholder="정보 열람할 캐릭터 이름 입력"
+          /><button id="getCharacterBtn">열람</button>
+        </div>
+        <div style="margin-left: 10vw; display: flex">
+          <div>
+            <h3>캐릭터 이름</h3>
+            <p id="character-info-name"></p>
+          </div>
+          <div style="margin-left: 4vw">
+            <h3>캐릭터 스탯</h3>
+            <p id="character-info-health"></p>
+            <p id="character-info-power"></p>
+          </div>
+        </div>
+      </div>
+      <div style="height: 20vh; display: flex">
+        <div>
+          <h2>3. 캐릭터 삭제 하기</h2>
+          <input
+            id="charactername-del"
+            placeholder="삭제할 캐릭터 이름 입력"
+          /><button id="delCharacterBtn">삭제</button>
+        </div>
+        <div style="margin-left: 10vw">
+          <h3>결과</h3>
+          <p id="delete-result"></p>
+        </div>
+      </div>
+      <div style="height: 20vh; display: flex">
+        <div>
+          <h2>4. 아이템 생성</h2>
+          <input id="create-item-input-name" placeholder="아이템 이름" />
+          <input
+            id="create-item-input-health"
+            type="number"
+            placeholder="stat health 입력"
+          />
+          <input
+            id="create-item-input-power"
+            type="number"
+            placeholder="stat power 입력"
+          /><button id="create-item-btn">생성</button>
+        </div>
+        <div style="margin-left: 10vw">
+          <h3>결과</h3>
+          <p id="create-item-result"></p>
+        </div>
+      </div>
+      <div style="height: 20vh; display: flex">
+        <div>
+          <h2>5. 아이템 목록 보기</h2>
+          <button id="list-item-btn">열람</button>
+        </div>
+        <div style="margin-left: 10vw; overflow: auto">
+          <h3>목록</h3>
+          <p id="list-item-result"></p>
+        </div>
+      </div>
+      <div style="height: 20vh; display:flex;">
+        <div>
+          <h2>6. 아이템 상세 정보 보기</h2>
+          <input id="get-item-input" placeholder="열람할 아이템 이름 입력"/><button id="get-item-btn">열람</button>
+        </div>
+        <div style="margin-left: 10vw;">
+          <h3>아이템 정보</h3>
+          <p id="get-item-result"></p>
+        </div>
+      </div>
+      <div style="height: 20vh; display:flex">
+        <div>
+          <h2>7. 아이템 정보 수정 하기</h2>
+          <input id="update-item-input-code" placeholder="업데이트할 아이템 코드"/> 
+          <input id="update-item-input-name" placeholder="변경내용-아이템 이름"/> 
+          <input id="update-item-input-stat-health" placeholder="변경내용-stat health"/>
+          <input id="update-item-input-stat-power" placeholder="변경내용-stat power"/><button>수정</button>
+        </div>
+        <div>
+          <h3>결과</h3>
+          <p id="update-item-result"></p>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
