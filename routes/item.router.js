@@ -55,7 +55,9 @@ router.patch("/change/:code", async (req, res) => {
   const item_code = req.params.code;
   const {item_name, item_stat} = req.body;
   const item = await Items.findOne({ item_code: item_code }).exec();
+  console.log({item_name, item_stat});
   if (item) {
+    console.log(`>>>` + item);
     item.item_name = item_name;
     item.item_stat = item_stat;
     item.save();

@@ -16,7 +16,7 @@ router.get("/info/:id", async (req, res) => {
   } else {
     return res
       .status(400)
-      .json({ success: false, errorMessage: "없는 캐릭터 입니다." });
+      .json({ success: false, errorMessage: "없는 캐릭터 또는 캐릭터 아이디를 입력해주세요" });
   }
 });
 
